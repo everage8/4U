@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="site-header__brand" href="/">4U</a>
+        <nav class="site-header__nav">
+            <a href="#">О проекте</a>
+            <a href="/login">Вход</a>
+        </nav>
+    </header>
+
+    <div class="page">
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Выберите задание</h1>
+                <p class="subtitle">4U</p>
+            </header>
+
+            <section class="task-filter">
+                <div class="filter-card">
+                    <div class="field">
+                        <label for="subjectSelect">Предмет</label>
+                        <select id="subjectSelect">
+                            <option value="">Выберите предмет</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="typeSelect">Тип задания</label>
+                        <select id="typeSelect" disabled>
+                            <option value="">Сначала выберите предмет</option>
+                        </select>
+                    </div>
+                    <button id="showButton" type="button">Показать задания</button>
+                </div>
+            </section>
+
+            <section class="results-section">
+                <div id="resultsContainer" class="results-container">
+                    <div class="empty-state">Выберите предмет и тип, затем нажмите «Показать задания».</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/js/shared-data.js"></script>
+    <script src="/js/Js.js"></script>
+</body>
+</html>

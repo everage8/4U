@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+
+  mongo:
+    image: mongo:7
+    container_name: exam-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: exam_tasks_db
+    volumes:
+      - mongo_data:/data/db
+      - mongo_cfg:/data/configdb
+    networks:
+      - app-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: exam-backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      PORT: "8080"
+      MONGO_URI: "mongodb://root:${MONGO_ROOT_PASSWORD}@mongo:27017/exam_tasks_db?authSource=admin"
+      MONGO_DB: "exam_tasks_db"
+      JWT_SECRET: "${JWT_SECRET}"
+      JWT_EXPIRY_HOURS: "72"
+      ADMIN_LOGIN: "${ADMIN_LOGIN}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      CORS_ORIGINS: "*"
+      WEB_ROOT: "web"
+      GIN_MODE: "release"
+    ports:
+      - "8080:8080"
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  mongo_data:
+  mongo_cfg:

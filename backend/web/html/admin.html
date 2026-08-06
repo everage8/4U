@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ ЛК - Управление базами заданий</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="site-header__brand" href="/">4U</a>
+        <nav class="site-header__nav">
+            <a href="/">На главную</a>
+            <a href="/login" id="logoutBtn">Выход</a>
+        </nav>
+    </header>
+
+    <div class="page">
+        <main class="main-content">
+            <header class="top-bar admin-top-bar">
+                <div>
+                    <h1>Редакционная панель</h1>
+                    <p class="subtitle">Управление базой заданий и решение задач</p>
+                </div>
+                <button type="button" class="admin-btn admin-btn--primary" id="openAddModalBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Добавить задание
+                </button>
+            </header>
+
+            <section class="admin-filter-card">
+                <div class="field admin-search-field">
+                    <label for="searchInput">Поиск по номеру задания</label>
+                    <input type="text" id="searchInput" class="admin-search-input" placeholder="Введите номер задания...">
+                </div>
+                <div class="field">
+                    <label for="subjectFilter">Предмет</label>
+                    <select id="subjectFilter">
+                        <option value="">Все предметы</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="typeFilter">Тип задания</label>
+                    <select id="typeFilter" disabled>
+                        <option value="">Все типы</option>
+                    </select>
+                </div>
+                <button type="button" class="admin-btn admin-btn--secondary" id="resetFiltersBtn">Сбросить</button>
+            </section>
+
+            <div class="admin-list-meta">
+                <div class="admin-stats" id="tasksStats">Загрузка заданий...</div>
+            </div>
+
+            <section class="admin-table-card">
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">№</th>
+                                <th style="width: 260px;">Предмет и тип</th>
+                                <th>Условие</th>
+                                <th style="width: 150px;">Ответ</th>
+                                <th style="width: 160px; text-align: right;">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasksTableBody">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="admin-pagination-wrapper">
+                    <div class="admin-pagination-info" id="paginationInfo">Страница 1</div>
+                    <div class="admin-pagination-controls" id="paginationControls">
+
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="admin-modal-backdrop" id="taskModalBackdrop">
+        <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="admin-modal__header">
+                <h2 class="admin-modal__title" id="modalTitle">Добавить новое задание</h2>
+                <button type="button" class="admin-modal__close" id="closeModalBtn" aria-label="Закрыть">&times;</button>
+            </div>
+            <form id="taskForm" class="admin-modal__body admin-form" novalidate>
+                <div class="admin-form__error-banner" id="formErrorBanner">Заполните все обязательные поля</div>
+                <div class="admin-form-row">
+                    <div class="field">
+                        <label for="modalSubject">Предмет <span style="color:#ef4444">*</span></label>
+                        <select id="modalSubject" required>
+                            <option value="">Выберите предмет</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="modalTaskType">Тип задания <span style="color:#ef4444">*</span></label>
+                        <select id="modalTaskType" disabled required>
+                            <option value="">Сначала выберите предмет</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="modalCondition">Текст условия <span style="color:#ef4444">*</span></label>
+                    <textarea id="modalCondition" rows="4" placeholder="Введите формулировку задачи... Используйте $...$ для формул, например $x^2+1$" required></textarea>
+                    <div class="latex-preview" id="conditionPreview"></div>
+                </div>
+                <div class="field">
+                    <label for="modalConditionImageUrl">Картинка к условию (опционально)</label>
+                    <input type="url" id="modalConditionImageUrl" placeholder="https://example.com/diagram.png">
+                    <img id="modalConditionImagePreview" class="admin-img-preview" alt="Превью картинки условия">
+                </div>
+                <div class="field">
+                    <label for="modalAnswer">Ответ <span style="color:#ef4444">*</span></label>
+                    <input type="text" id="modalAnswer" placeholder="Например: 0.2 или 42" required>
+                </div>
+                <div class="field">
+                    <label for="modalSolution">Решение (подробное описание)</label>
+                    <textarea id="modalSolution" rows="4" placeholder="Опишите пошаговое решение задачи... Используйте $...$ для формул"></textarea>
+                    <div class="latex-preview" id="solutionPreview"></div>
+                </div>
+                <div class="field">
+                    <label for="modalSolutionImageUrl">Картинка к решению (опционально)</label>
+                    <input type="url" id="modalSolutionImageUrl" placeholder="https://example.com/solution-diagram.png">
+                    <img id="modalSolutionImagePreview" class="admin-img-preview" alt="Превью картинки решения">
+                </div>
+            </form>
+            <div class="admin-modal__footer">
+                <button type="button" class="admin-btn admin-btn--secondary" id="cancelModalBtn">Отмена</button>
+                <button type="submit" form="taskForm" class="admin-btn admin-btn--primary" id="saveTaskBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-modal-backdrop" id="deleteModalBackdrop">
+        <div class="admin-modal admin-modal--sm" role="dialog" aria-modal="true">
+            <div class="admin-modal__header">
+                <h2 class="admin-modal__title">Удаление задания</h2>
+                <button type="button" class="admin-modal__close" id="closeDeleteModalBtn" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="admin-modal__body">
+                <p style="margin: 0; color: #374151; line-height: 1.6;">
+                    Вы действительно хотите удалить это задание? Это действие нельзя будет отменить.
+                </p>
+            </div>
+            <div class="admin-modal__footer">
+                <button type="button" class="admin-btn admin-btn--secondary" id="cancelDeleteBtn">Отмена</button>
+                <button type="button" class="admin-btn admin-btn--danger" id="confirmDeleteBtn">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/shared-data.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>
